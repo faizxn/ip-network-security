@@ -1,0 +1,34 @@
+
+
+ # activation-key 0x4a3ec071 0x0d86fbf6 0x7cb1bc48 0x8b48b8b0 0xf317c0b5
+ # reload
+ 
+ 
+ # copy tftp://50.0.0.1/asdm-649.bin disk0:/asdm-649.bin
+ 
+ 
+ # sh disk0
+--#--  --length--  -----date/time------  path
+  191  38191104    Nov 21 2014 21:07:48  asa912-smp-k8.bin
+  192  17906032    Apr 08 2015 22:33:44  asdm-713.bin
+  193  26350916    Apr 09 2015 06:28:20  asdm-741.bin
+  194  38043648    May 10 2015 02:14:06  asa916-smp-k8.bin
+
+4118732800 bytes total (3556712448 bytes free)
+
+
+
+(config)# asdm image disk0:/asdm-741.bin
+ # write memory
+ # copy run start
+
+(config)# username admin password cisco
+(config)# aaa authentication http console LOCAL
+
+
+(config)# http server enable
+(config)# http 0 0 inside
+
+
+ # show file system 		<!-- show available and usages memory 
+
