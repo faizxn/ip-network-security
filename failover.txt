@@ -1,0 +1,70 @@
+
+# Hardware Pre:
+	 # same model
+ 	 # same interface
+ 	 # same ram
+
+# Software Pre:
+                  # same mode > either routed | transparent
+                  # same context > simple | multiple
+                  # same IOS version
+
+
+At ASA, there is no prempt option to become primary active after failover at active/standby.
+
+# it should replicate same identical confign at both firewall.
+
+SCPS protocol is used to replicate configure.
+
+# failover interface-policy 1/2/3 is used to change the state (active/standy) if interface is changed. 
+# (config) failover active -> force to become active
+# (config) failover ipsec pre-shared-key cisco      -> for secure failover link
+# show failover
+
+# show run context
+<!--------------------  Active or Passive ----------------------->
+
+# prompt state   <!-- show active | standby 
+# prompt state priority  <!-- show active | standby 
+ 
+# higher priority value will active.. 100/50
+
+# stateless: information of the user traffic is not replicated from active to standby router. so that if active goes down, standby drop the traffic.
+# statefull: all information of the user traffic is replicated from active to standby router.
+
+# failover link sends hello msg for every 1 second
+
+
+<!--------------------  Active or Active----------------------->
+
+Active/Standby can run in single/multi mode. 
+But active/active must run on multi mode.
+
+Prempt is working here. 
+
+ciscoasa(config)# failover lan unit primary 
+ciscoasa(config)# failover lan interface fover gig0/4
+ciscoasa(config)# failover interface ip fover 15.1.1.1 255.255.255.252 standby 15.1.1.2
+
+ciscoasa(config)# failover lan unit secondary
+ciscoasa(config)# failover lan interface fover gig0/4
+ciscoasa(config)# failover interface ip fover 15.1.1.1 255.255.255.252 standby 15.1.1.2
+
+ciscoasa(config)# failover group 1
+ciscoasa(config-fover-geoup)#  preempt
+ciscoasa(config-fover-geoup)#  primary
+
+ciscoasa(config) failover group 2
+ciscoasa(config-fover-geoup)#  preempt
+ciscoasa(config-fover-geoup)#  secondary
+
+
+ciscoasa(config)# context c1
+ciscoasa(config-cxt)#  join-failover-group 1
+
+
+ciscoasa(config)# context c2
+ciscoasa(config-cxt)#  join-failover-group 2
+
+
+

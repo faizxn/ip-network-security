@@ -1,0 +1,57 @@
+
+
+#> We can apply only one global policy map which is global_policy.
+
+<!-------------- limited connection -----------------------!
+
+# performs specific inspection.
+# ASA maintains limited connection table. exceded traffic then drop
+
+# policy-map type inspect > means layer 7 
+
+# show conn count
+# show run timeout
+
+# show line
+
+Object::::::
+ 
+1. two ssh session is allowed per user.
+2. two telnet session is allowed per user.
+
+# access-list mark-telnet-traffic permit tcp any any eq 30
+# class-map cmap
+    match access-list mark-telnet-traffic 
+or 
+# class-map mark-telnet-traffic
+    match port tcp eq 23
+
+# policy-map pmap
+   class mark-telnet-traffic
+   set connectiob per-client-max 2
+
+# service-policy pmap interface inside
+
+
+__________________ BGP pass though_____________
+
+# BGP session is establish but issue arised with authentication.
+
+# tcp-map tmap                                  <!-- This is also called TCP normalization-------------------!!!
+   tcp-options range 19 19 allow         <!-- Goes TCP field number is 19 MD5 digest---!! 
+
+<!-- ASA will remove the authentication field 
+
+# access-list bgp-acl permit tcp any any eq bgp
+# access-list bgp-acl permit tcp any eq bgp any
+
+# class-map cmap
+   match access-list bgp-acl
+
+# policy-map global_policy 
+   class cmap
+   set connection random-sequence-number disable    <!-- BGP include seq number during the hash calcuation---!!!
+   set connection advanced-options tmap 
+
+
+

@@ -1,0 +1,13 @@
+
+ #Note:> when enabled Redundent Interface,  member interface config will remove. Redundent interface can only 2 members add.  One will be active and another will be passive.  
+
+# show interface redundent 1 
+
+ # interface redundent 1 
+    member-interface gi0/0
+    member-interface gi0/1
+
+# redundant-interface redundant 1 active-member gi0/0      <!-- manual config for active interface.
+# 
+
+

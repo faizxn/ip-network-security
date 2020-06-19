@@ -1,0 +1,24 @@
+
+#!> Types of VPN:
+
+1> Route based VPN
+2> Policy based VPN
+
+
+ #> Two types of VPN
+
+1. IPSec    > Site 2 Site, Remote VPN, DMVPN, GETVPN and FlexVPN 
+2. SSL      >
+
+
+
+1. Site2Site VPN or Lan2Lan uses standard IPSec. Connects two or more between two or more peers
+2. Client VPN > Supports many protocols > IPSec, SSL, L2TP, PPTP > Connects one computer on internet to protect networks behind a firewall. 
+    
+ #> Two types of Client VPN 
+                               1. AnyConnect which support SSL, IPSec/IKE2. All applications can access remotely.
+	             2. Clientless Mode WebVPN. Connect via browser. No software required. 
+
+IPSec mode:     1> Transport mode                         (L3-L7)
+                         2> Tunnel mode (default)                (L4-L7)
+

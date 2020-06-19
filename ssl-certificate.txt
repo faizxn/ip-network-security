@@ -1,0 +1,131 @@
+
+# keypair > needs to match with trustpoint
+
+Verify that time is accurate
+vpn# sh clock
+06:46:19.172 GMT Fri Dec 4 2015
+vpn#
+vpn# sh run ntp
+ntp server x.x.x.x source outside
+ntp server x.x.x.x source outside prefer
+vpn# sh ntp status
+Clock is synchronized, stratum 3, reference is x.x.x.x
+nominal freq is 99.9984 Hz, actual freq is 99.9996 Hz, precision is 2**6
+reference time is da0bb44c.256d5214 (06:42:20.146 GMT Fri Dec 4 2015)
+clock offset is 0.0742 msec, root delay is 12.12 msec
+root dispersion is 46.77 msec, peer dispersion is 15.82 msec
+
+
+vpn#
+Verify that the combination <hostname>.<domain-name> equals the fqdn of the certificate CN.
+vpn(config)#hostname vpn
+vpn(config)#domain-name domain.com
+
+If it does not match, you will get the following error message when enrolling the csr:
+
+WARNING: The certificate enrollment is configured with an fqdn
+that differs from the system fqdn. If this certificate will be
+used for VPN authentication this may cause connection problems.
+ 
+
+Create key-pair
+vpn(config)# crypto key generate rsa label sslcert-keypair modulus 2048 noconfirm
+INFO: The name for the keys will be: sslcert-keypair
+Keypair generation process begin. Please wait...
+vpn(config)#
+Create and configure trustpoint
+Refer to the earlier created key-pair. Also make sure that CN matches hostname+domain-name. Many root CA:s requires company name in the O= (organization) field and also correct country code in the SE= field.
+
+vpn(config)# crypto ca trustpoint sslcert-trustpoint
+vpn(config-ca-trustpoint)# subject-name CN=vpn.domain.com,L=City,ST=State,O=ACME Inc,C=SE
+vpn(config-ca-trustpoint)# keypair sslcert-keypair
+vpn(config-ca-trustpoint)# fqdn vpn.domain.com
+vpn(config-ca-trustpoint)# enrollment terminal
+Enroll
+vpn(config)# crypto ca enroll sslcert-trustpoint
+% Start certificate enrollment .. 
+% The subject name in the certificate will be: CN=vpn.domain.com,O=ACME Inc,C=SE
+
+% The fully-qualified domain name in the certificate will be: vpn.domain.com
+
+% Include the device serial number in the subject name? [yes/no]: no
+
+Display Certificate Request to terminal? [yes/no]: yes
+Certificate Request follows:
+-----BEGIN CERTIFICATE REQUEST-----
+MIIC1DCCAbwCAQAwVjELMAkGA1UEBhMCU0UxFTATBgNVBAoTDEJqdXZzIEtvbW11
+bjEUMBIGA1UEAxMLdwBuLmJqdXYuc2UxGjAYBgkqhkiG9w0BCQIWC3Zwbi5ianV2
+LnNlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs/d2HneWc2l/ru+q
+sJu2M2vdgNln9k2wtuDxmKcrbp3Caf+qY89La3o1XGS6GovhLYPCx/+Xa9JzzWRc
+alCMKk1F5UvS1a0FQvHeHEec+TQoZOEKgxmrPJaKdPyU/IcFyUPGRZaxe09FSBvY
+y690ETtHFgibK+aKjr2l4d9Lx9auUmPtKIWPccujIUM2+47Fy8hhO/bNjC4GNOw1
+rgyip1nWFEUHZOv3CbRcV/cnbo2aWL7ZmnSP5w+Tc13kyZVRIL2A/cHJk1vw118B
+CspH3K0k919VQIsl78/6sHv/VEx1+59lWG7OO3buUY/Y1xcXPML+GkiuVw9j+cIa
+FaCt4QIDAQABoDkwNwYJKoZIhvcNAQkOMSowKDAOBgNVHQ8BAf8EBAMCBaAwFgYD
+VR0RBA8wDYILdnBuL1JqdXYuc2UwDQYJKoZIhvcNAQEFBQADggEBAKjLGKZngbb2
+mnX/2dbOfZoC7v/t0ES8o0YQupbWfTaHfSEOD6N3AklVbX4a508AnPSAvbPUX8iv
+Cp/lYhVNmt2xNqjWmjjXhDAbZnRr/gXNJiPZAGzDTdWfw3DkUkwvzAyHyDJfHSVY
+j+8kdNwED94ULVxG72VHIqTH5ncrJ61KqAurQFtvJs7ao29e+vnMWJPRIMcZZPvD
+Dqr+kNWI/GSA8LUg8M6hT8XQvbnN1M7UY5OGgrME1EO1dBwwdGpRDy7nCf9AgOqI
+sFjDmfIQ7LYOoXspXJXGqv/ye/I044CB4AAsShf7pscX0DmS7r+64SZsJxGdVzMU
+EjVXcdN57GI=
+-----END CERTIFICATE REQUEST-----
+
+Redisplay enrollment request? [yes/no]: no
+vpn(config)# 
+Send the CSR (the garbage between the —– lines) to the CA and wait for a reply
+
+When the reply comes back from CA it will include a base-64 encoded certificate. Paste the junk when prompted as shown below…
+
+
+vpn(config)# crypto ca import sslcert-trustpoint certificate 
+WARNING: The certificate enrollment is configured with an fqdn
+that differs from the system fqdn. If this certificate will be
+used for VPN authentication this may cause connection problems.
+
+Would you like to continue with this enrollment? [yes/no]: yes
+
+% The fully-qualified domain name in the certificate will be: 
+
+
+Enter the base 64 encoded certificate.
+End with the word "quit" on a line by itself
+
+-----BEGIN CERTIFICATE-----
+MIWE8TCCA9mgAwIBAgISESFaa2+V3Pv4L8cqGL6ZctLJMA0GCSqGSIb3DQEBCwUA
+MGAxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTYwNAYD
+VQQDEy1HbG9iYWxTaWduIERvbXFpbiBWYWxpZGF0aW9uIENBIC0gU0hBMjU2IC0g
+RzIwHhcNMTUxMjA3MjIyMjQwWhcNMTgxMjA3MjIyMjQwWjBGMQswCQYDVQQGEwJT
+RTEhMB8GA1UECxMYRG9tYWluIENvbnRyb2wgVmFsaWRhdGVkMRQwEgYDVQQDEwt2
+cG4uYmp1di5zZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALP3dh53
+lnNpf67vqrCbtjNr3YDZZ/ZNsLbg8ZinK26dwmn/qmPPS2t6NVxkuhqL4S2Dwsf/
+l2vSc81kXGpQjCpNReVL0tWtBULx3BxHnPk0KGThCoMZqzyWinT8lPyHBclDxkWW
+sXtPRUgb2MuvdBE7RxYImyvmio69peHfS8fWrlJj7SiFj3HLoyFDNvuOxcvIYTv2
+zYwuBjTsNa4Moqdd1hRFB2Tr9wm0dVf3J26Nmli+2Zp0j+cPk3Nd5MmVUSC9gP3B
+yZNb8NdfAQrKR9ytJPdfVUCLJe/P+rB7/1RMdfufZVhuzjt27lGP2NcXFzzC/hpI
+rlcPY/nCGhWgreECAwEAAaOCAb0wggG5MA4GA1UdDwEB/wQEAwIFoDBJBgNVHSAE
+QjBAMD4GBmeBDAECATA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxz
+aWduLmNvbS9yZXBvc2l0b3J5LzAWBgNVHREEDzANggt2cG4uYmp1di5XZTAJBgNV
+HRMEAjAAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjBDBgNVHR8EPDA6
+MDigNqA0hjJodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzL2dzZG9tYWludmFs
+c2hhMmcyLmNybDCBlAYIKwYBBQUHAQEEgYcwgYQwRwYIKwYBBQUHMAKGO2h0dHA6
+Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzZG9tYWludmFsc2hhMmcy
+cjEuY3J0MDkGCCsGAQUFBzABhi1odHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20v
+Z3Nkb21haW52YWxzaGEyZzI1HQYDVR0OBBYEFObizS0jMNVzX5OqUkOUML02+XUX
+MB8GA1UdIwQYMBaAFOpOfNSALeUVgYYmjIJtwJikz5cPMA0GCSqGSIb3DQEBCwUA
+A4IBAQB2Ln0H9omBRfocT+LxrGrOrwKUpsyAM2DWORIRz0rtzPHs38FVhdfJvk+1
+8fmWoyd/K35dxq+a2LOuTZRYTVwlNqTqeOPrMMbIiNO9WVtM9avJPITYn9Emu4q8
+eflKmjZW+uED8NDAtqPMY8Q1Idq2FxhqM4rkhbYJI41Cd5jbFhWitXsSxpM2iYQa
+yyunK5mdYfldxWELCttUwA840NjVCHULzdDf3E4iF1Er3hrE+O1N18i5pQ7m/sp2
+6mjkGKSzNxDYWAm4UySWKhoZpgRlpisr0oKwT1nNxFiJfCZA67+b5zBZELJYfiy4
+eiTy7n1hWPfvoo/GkD00BdgKk4mL
+-----END CERTIFICATE-----
+quit
+
+
+
+
+INFO: Certificate successfully imported
+
+
+vpn(config)# ssl trust-point sslcert-trustpoint outside    <!---- The last command applies the installed trustpoint-certificate to all SSL connections on the outside interface.

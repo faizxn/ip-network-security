@@ -1,0 +1,32 @@
+
+<!--- Allow ACL for NAT specific port number:
+
+# acccess-list acl-inside extended permit tcp any object WebServer eq 8080
+
+
+# Two types of NAT > 1. Twice or Manual NAT          > Section 1
+                                   2.  Auto NAT or Object NAT   > Section 2
+
+
+# object network Inside-Net
+    subnet 10.0.0.0 255.255.255.0
+    nat (inside, outside) dynamic 59.153.100.1 
+
+# object network DMZ-Net
+   subnet 172.16.0.0 255.255.255.0
+    nat (dmz, outside) dynamic 59.153.100.2
+
+# object network Guest-Net
+   20.0.0.0 255.255.255.0
+    nat (guest, outside) dynamic 59.153.100.3
+
+
+# object  network WebServer
+    host 172.16.0.100
+    nat (dmz, outside) static 59.153.100.5 service tcp 8080 www  <!--- 8080 (real port) and www (mapped port)
+
+
+<!----------------      Twice or Manual NAT ------------------
+
+# nat (dmz,inside) source static inside-nat(real-obj)  inside-nat (mapped-obj) destination static remote-nat (mapped-obj) remote-nat (real-obj) 
+   

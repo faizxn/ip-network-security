@@ -1,0 +1,22 @@
+
+
+# mac-address auto         <!--  auto generated mac address.
+
+<--------------------------------------
+
+
+ # class-map type inspect <ftp>/sip/http/dns/rtsp l2cmap
+    match request-command get 
+
+# policy-map type inspect ftp l2pmap
+   class l2cmap
+    reset log
+
+# class-map cmap 
+    match port tcp port ftp
+
+# policy-map pmap
+   class cmap
+   inspect ftp strict l2pmap
+  
+# service-policy pmap interface inside

@@ -1,0 +1,16 @@
+
+ # capture myCapture interface inside real-time
+ # capture myCapture interface inside 
+
+ # capture myCapture interface inside match icmp any any
+ # capture myCapture interface inside match tcp any any
+
+ # access-list myCapture extended permit icmp any4 any4
+ # capture myCapture access-list myCapture 
+
+ # show capture
+
+ <!--- browser URL
+
+ # https://10.0.0.100/capture/myCapture
+ # https://10.0.0.100/capture/myCapture/pcap

@@ -1,0 +1,158 @@
+
+#> Site2Site means Lan2Lan
+
+
+SPI > Security Parameters Index.
+
+config# more system:running-config            <!-- show hide password of pre-shared-key
+
+
+<!-------------------Router-ASA-Router---------------------->
+
+
+Router ------------------------ ASA -------------------- Router.
+
+#> ASA first add this command before config the router-router phase-1 ipsec protocol
+
+(asa-config)#policy-map global-policy
+                       class inspect_default
+                                 inspect ipsec-pass-thru
+
+#> at ASA connection table it will cache for 10 min. later it will erase from connection table. need to timeout at 0.
+
+(asa-config)#  access-list 100 permit esp any any
+(asa-config)# class-map cmap 
+                     match access-list 100
+
+(asa-config)# policy-map type inspect ipsec-pass-thru pmap
+
+
+
+
+<!------------------------------------Router and ASA---------------
+
+
+Router# crypto isakmp policy 1
+ encr 3des
+ hash md5
+ authentication pre-share
+ group 2
+crypto isakmp key cisco address 59.153.100.1
+!
+# crypto ipsec transform-set tset esp-3des esp-md5-hmac
+ mode tunnel
+!
+# access-list 101 permit ip 20.0.0.0 0.0.0.3 10.0.0.0 0.0.0.3
+!
+# crypto map cmap 1 ipsec-isakmp
+  set peer 59.153.100.1
+  match address 101
+  set transform tset
+!
+------------------------------------------------------------------------------------------------
+
+ASA# cryto iskamp enable outside   <!--- by default listening port iskamp udp/500 is not enabled.
+
+ASA#crypto isakmp policy 1
+          encr 3des
+          hash md5
+          authentication pre-share
+          group 2
+         crypto isakmp key cisco address 59.153.100.1
+!
+# crypto ipsec transform-set tset esp-3des esp-md5-hmac
+ mode tunnel
+!
+# access-list 101 permit ip 20.0.0.0 0.0.0.3 10.0.0.0 0.0.0.3
+!
+# crypto map cmap 10 ipsec-isakmp
+   crypto map cmap 10 set peer 59.153.100.1
+   crypto map cmap 10 match address 101
+   crypto map cmap 10 set transform tset
+   crypto map cmap 10 interface outside
+!
+
+
+
+# show crypto isakmp sa
+# show crypto isakmp sa detail
+
+# show cryto ipsec sa
+# show cryto ipsec sa | in cap
+
+# show/clear crypto session
+
+<!--------------------------------------- 
+
+# sysopt connection permit-vpn   <!-- this command allow ASA traffic from outside to inside security level without checking  due to acl 
+
+
+
+
+<!---------------------------------------- ASA/ASA----------------------
+
+
+
+ASA1(config)# route outside 0 0 10.0.0.1  <!-- default static route  
+
+
+
+<!--- this config is not exist in ASA. (crypto isakmp key cisco address 59.153.100.1). Need to config this at ASA like.
+
+ASA1# tunnel-group 59.153.100.1 type ipsec-l2l
+ASA1# tunnel-group 59.153.100.1 ipsec-attributes
+ASA1(tunnel-ipsec)# ikev1 pre-shared-key cisco
+ 
+ASA1# cryto ipsec ikev1 transform-set tset esp-3des esp-md5-hmac 
+
+
+
+
+<!--------- After ASA 8.3 version, we cant call ISKAMP at ASA. It should call IKEv2.
+ASA1
+
+
+
+
+
+
+ASA1(config)# crypto ikev1 policy 10 
+ASA1(config-ikev1-policy)# authentication pre-share 
+ASA1(config-ikev1-policy)# encryption aes
+ASA1(config-ikev1-policy)# hash sha
+ASA1(config-ikev1-policy)# group 2
+ASA1(config-ikev1-policy)# lifetime 3600
+
+
+ASA1(config)# crypto ikev1 enable outside
+ASA1(config)# crypto isakmp identity address 
+
+
+ASA1(config)# tunnel-group 10.10.10.2 type ipsec-l2l
+ASA1(config)# tunnel-group 10.10.10.2 ipsec-attributes 
+ASA1(config-tunnel-ipsec)# ikev1 pre-shared-key MY_SHARED_KEY
+
+
+ASA2(config)# crypto ikev1 policy 10
+ASA2(config-ikev1-policy)# authentication pre-share 
+ASA2(config-ikev1-policy)# encryption aes
+ASA2(config-ikev1-policy)# hash sha
+ASA2(config-ikev1-policy)# group 2
+ASA2(config-ikev1-policy)# lifetime 3600
+
+ASA2(config)# crypto ikev1 enable outside
+ASA2(config)# crypto isakmp identity address 
+
+ASA2(config)# tunnel-group 10.10.10.1 type ipsec-l2l
+ASA2(config)# tunnel-group 10.10.10.1 ipsec-attributes 
+ASA2(config-tunnel-ipsec)# ikev1 pre-shared-key MY_SHARED_KEY
+
+
+ASA1(config)# access-list LAN1_LAN2 extended permit ip 192.168.1.0 255.255.255.0 192.168.2.0 255.255.255.0
+
+
+ASA1(config)# crypto map MY_CRYPTO_MAP 10 match address LAN1_LAN2
+ASA1(config)# crypto map MY_CRYPTO_MAP 10 set peer 10.10.10.2
+ASA1(config)# crypto map MY_CRYPTO_MAP 10 set ikev1 transform-set MY_TRANSFORM_SET
+ASA1(config)# crypto map MY_CRYPTO_MAP 10 set security-association lifetime seconds 3600
+ASA1(config)# crypto map MY_CRYPTO_MAP interface outside

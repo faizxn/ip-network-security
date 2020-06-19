@@ -1,0 +1,22 @@
+
+
+ciscoasa(config)# fixup protocol icmp
+ciscoasa(config)# fixup protocol http 8080
+ OR
+ciscoasa(config)# policy-map global_policy
+ciscoasa(config-pmap)# class default-inspection-class
+ciscoasa(config-pmap-c)# inspect icmp
+
+# access-list acl-inside permit tcp any any eq 80
+# access-list acl-inside permit tcp any any eq 443
+# access-list acl-inside permit udp any any eq 53
+# access-list acl-inside permit icmp any any 
+
+# access-list acl-outside deny ip any any
+
+
+# access-group acl-inside in interface inside
+# access-group acl-outside in interface outside
+
+
+ 

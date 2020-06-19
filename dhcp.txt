@@ -1,0 +1,12 @@
+
+# int fa0/1
+     nameif inside
+     security-level 100
+     ip add 10.0.0.1 255.255.255.0
+
+
+# dhcpd address 10.0.0.10-10.0.0.20 inside
+# dhcpd dns 8.8.8.8 8.8.4.4 interface inside
+
+# dhcped enable inside 
+ 

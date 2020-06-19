@@ -1,0 +1,12 @@
+
+ # police > exceed bandwidth will drop
+ # shape > exceed bandwidth will not drop.. added it to queuee but become slow.
+
+
+
+(config-asa)# capture abc interface inside
+
+# show capture abc
+# show capture abc decode   <!-- decode is used mostly for IKAMP packet.
+  
+<!-- we can add ACL for specific traffic

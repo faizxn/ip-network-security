@@ -1,0 +1,24 @@
+
+
+# access-list CUT_THROUGH permit tcp any host 192.0.2.2 eq www
+# aaa authentication match CUT_THROUGH inside LOCAL
+# username cisco password cisco123
+!
+# auth-prompt prompt Cut-through Authentication
+# auth-prompt accept Cut-through: Authentication successful
+# auth-prompt reject Cut-through: Authentication rejected
+
+
+The relevant configuration on the Cisco router that is acting as our web server is as follows:
+
+# ip http server
+# ip http authentication local
+!
+# username ciscohttp privilege 15 secret cisco123
+# username ciscotelnet privilege 15 secret cisco123
+!
+# ip route 0.0.0.0 0.0.0.0 192.0.2.1
+!
+line vty 0 4
+
+# show uauth

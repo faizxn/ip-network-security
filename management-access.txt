@@ -1,0 +1,18 @@
+
+ # aaa authentication enable console LOCAL      <!---- For log console login
+ # conf t > # enable password p@$$word
+   
+ # aaa authentication ssh console LOCAL
+ # aaa authentication http console LOCAL
+
+# cryto key gen rsa modulus 1024
+
+# conf t
+    # http server enable
+    # http 10.0.0.0 255.255.255.0 outside
+
+# conf t
+    # telnet 0.0.0.0 0.0.0.0 inside
+    # ssh 10.0.0.0 255.255.255.0 outside
+    # ssh timeout 60
+

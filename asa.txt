@@ -1,0 +1,17 @@
+
+
+TunnelGroup > also called connection profiles. defines the authentication credential.
+
+
+           > DefaultL2LGroup               for L2L
+           > DefaultRAGroup                for remote access
+           > DefaultWebVPNGroup            for remote access for ssl
+
+
+Group Policy> what traffic specifically allow over the tunnel
+
+By default one group policy>  DfltGrpPolicy
+
+# show run access-group
+# show asp
+# show conn
