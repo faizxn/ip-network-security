@@ -1,0 +1,60 @@
+
+
+ # getvpn:
+ 
+ + its unidirection. it means both side. 
+ + it maintaine 2 encrytion and 2 hashing for each tunnel. i.e. 100 tunel 200+200.. router max 50/60 encrytion.. besides it has other works.
+ 
+ # component:
+  
+  + gdoi (group domain of interpretation) - udp/848. its update version of ISAKMP. it carries key to GM from KS. and 10 packet msg exchange between KS and GM.
+  + ks - keys are refreshed periodically by KS before the current IPSec SA expire. so there is no loss of traffic.	
+  + gm
+
+ # ISAKMP is used for negotiating.. establishing.. modification and deletion of SA. Default port 500/udp
+   + ISAKMP 6 packet msg exchange.
+
+
+ # KS:
+	+ create ISAKMP policy and key
+	+ create ACL for interesting traffic
+	+ create RSA for private or public
+	+ generate TEK key	
+
+
+		cryto ipsec transform-set tset esp-3des esp-md5-hmac
+		cryto ipsec profile my-gvpn-profile
+		  set transform-set tset
+	
+		
+		cryto gdoi group my-gvpn-group 
+		  indentity number 10
+		  server local											|| if this is key-server
+		  rekey authentication mypubkey rsa ciscoccie
+		  rekey trasport unicast
+		  address ipv4 59.153.100.1
+	
+
+		match address ipv4 1
+		  sa ipsec 1											|| inside.. we define what to encrypt and how to encrypt
+		  
+		match address ipv4 asia-site							|| what to encrypt
+		profile my-gvpn-profile 								|| how to encrypt	
+	
+	
+	
+	      
+			
+		
+
+
+
+
+
+    
+ 
+ 
+ 
+ 
+ 
+ 
