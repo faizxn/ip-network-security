@@ -1,0 +1,41 @@
+
+
+ # port 500
+ # ipsec: ipsec is a group of protocols that are used together to set up encrypted connections between device.
+        it helps keep data secure sent over public networks. its often used to set up VPN.
+		it works by encrypting IP packets along with authenticating the source where the packets come from.
+				
+	VPN logins are usually password-based. users require application.
+	IPsec protocols add several headers and trailers to packets. either the MSS and MTU have used to be adjusted.	
+
+    MTU for a network is 1500 bytes.. a IP header is 20 bytes long .. a TCP header is  20 bytes long.. 1460 bytes of payload.
+	however ipsec adds an authentication header.. an esp header and associated trailers. These add 50-60 bytes to a packet, or more..
+
+	
+ #IPsec tunnel mode and IPsec transport mode:
+
+	+ tunnel mode,  both ip header and payload is encrypted.  new ip packet encapsulates the encrypted one with a new header that is used for routing decisions.	
+	+ transport mode, only ip payload is encrypted. but ip header is not encrypted. orginal ip header is used for routing decisions. 
+	
+	
+	
+ # protocols are used in IPsec:
+
+      + AH: The AH protocol ensures that data packets are from a trusted source and that the data has not been tampered with from attackers.
+	  + ESP: ESP encrypts the IP header and the payload for each packet.
+	  + SA (security association): SA refers to a number of protocols used for negotiating encryption keys and algorithms. One of the most common SA protocols is Internet Key Exchange (IKE).
+
+	
+ # ipsec connection works:
+
+		+ key-exchange: keys are necessary for encryption. key is a string of random characters that can be used to encrypt and decrypt message.
+		
+		+ packet headers and trailers: all data that is sent over a network is broken down into smaller pieces called packets. packets contain payload.
+		ipsec adds several headers to data packets containing authentication and encryption information.
+
+		+ authentication: ipsec provides authentication for each packet.		
+		+ encryption: ipsec encrypts the payloads. 
+		
+		+ transmission: encrypted ipsec packets travel across one or more networks to their destination using a transport protocol.
+		decryption: at the other end of the communication. the packets are decrypted.
+		
