@@ -1,0 +1,54 @@
+
+
+
+	# declar zones
+		+ configure zone (inside, outside, dmz, vpn) interface and virtual-router
+
+
+	#inside to outside policies
+		+ configure security policy 
+		name inside-internet type(interzone)	zone(inside->address-10-network)	destination(outside-any)	application(dns|ssl|web-browser) service application-default	action(permit)
+
+
+	#many to one nat	
+		+configure pat
+	name pat-policy-inside-outside  nattype-ipv4	original-packet(source-zone inside	destination-zone outside	destination-interface eth-0/0  service any	source-address 10-network
+	destination-address any	 translated-packet translate-type(dynamic IP and port)	address-type interface-adddress  interface eth-0/0 ip-adddress 59.153.100.1
+
+
+	#allow public access to dmz
+		+ configure static-nat 
+	name server-static-nat  nattype-ipv4  original-packet(source-zone dmz) destination-zone outside destination-interface eth-0/1  service any  source-address single-server-address
+	destination-address any translated-packet translate-type(static) translated-address 59.153.100.80 bi-directional
+
+		+ configure policies to allow dmz from public		 
+	name type(interzone)	zone(outside any) destination(dmz-destination-address 59.153.100.80) application any service service-http  action(permit)
+	
+	
+	# exporting and importing configure
+		+ device setup operations
+
+	exporting config
+		save named configuration snapshot -> firewall-run-config
+		then select -> firewall-run-config export named configuration snapshot
+	
+	importing config 
+		import named configuration snapshot
+		then go -> load name configuration snapshot ->firewall-run-config
+		
+		commmit 
+		
+		
+	# licensing ngfw 
+		+ dashboard general information cpu-id uuid
+		+ device licenses license management 
+		
+		
+	# upgrade a firewall - firstly check software-version and application-version at
+		+ dashboard general information 
+		+ device software 
+		+ device dynamic updates (can set schedule for upgrade here)
+	
+	
+	
+	
