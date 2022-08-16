@@ -1,0 +1,16 @@
+
+Cisco IPS sensors can operate in either Promiscuous or Inline modes.. 
+	The decision on what mode to use depends on many considerations of network.. 
+	
+	When deployed in Promiscuous Mode, it captures the traffic for the sensor and forwards a copy for analysis..
+		It can detect an attack and send an alert. But  it does not prevent the attack..
+
+
+	To deploy in inline mode, you need to configure the sensor as a transparent Layer 2 device that passes traffic..
+		It can block malicious traffic.. 
+
+	Keep in mind that a sensor could be configured inline..
+	
+	
+IPS Version 7.0 software permits a device to do promiscuous mode and inline mode simultaneously..
+	which allows some segments to be monitored for IDS only while other segments use IPS protection..
