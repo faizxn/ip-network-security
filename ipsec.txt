@@ -38,4 +38,51 @@
 		
 		+ transmission: encrypted ipsec packets travel across one or more networks to their destination using a transport protocol.
 		decryption: at the other end of the communication. the packets are decrypted.
-		
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+
+  #IPSec#
+  
+  IPSec Protocol 		: ESP, AH, ESP+AH
+  Encrption 	 		: DES, 3DES, AES
+  Authentication 		: MD5, SHA
+  DH (Diffie-Hellman)	: DH-1,2,5
+  
+  IKE phase 1 - two peers will negotiate about the encryption, authentication, hashing and other protocols. 
+  IKE Phase 2 - will be actually used to protect user data. There is only one mode to build the IKE phase 2 tunnel which is called quick mode.
+  
+  
+
+  Hashing: we use a hashing algorithm to verify the integrity, we use MD5 or SHA for this.
+  
+  Authentication: each peer has to prove who he is. Two commonly used options are a pre-shared key or digital certificates.
+
+		+Main mode
+		+Aggressive mode
+
+	Main Mode: IKEv1 main mode uses 6 (six) messages.
+	Aggressive mode	: IKEv1 aggressive mode only requires 3 (three) messages to establish the security associatio	
+
+  Encryption: what algorithm do we use for encryption? For example, DES, 3DES or AES.
+  
+  DH Group: The DH group determines the strength of the key that is used in the key exchange process. 
+					The higher group numbers are more secure but take longer to compute.
+  
+  Lifetime: a common default value is 86400 seconds (1 day).
+  SPI (Security Parameter Index), this is a unique value that identifies this security association.
+
+  
+  SA (Security Association) : is collection of parameters that the two devices will use.
+																										
+  
+  AH and ESP: both offer authentication and integrity but only ESP supports encryption. Because of this, ESP is the most popular choice nowadays.
+	
+	Both protocols support two different modes-
+  
+			+Transport mode
+			+Tunnel mode
+  
+  
+  
+  
